@@ -44,6 +44,54 @@ Eigen::Matrix<T, 6, 1> log(const Eigen::Transform<T, 3, Eigen::Isometry>& A_T_B)
     return delta;
 }
 
+template <typename  T>
+static T interpolate(double t0, double t1, double interp_t,T& v0, T& v1){
+
+    if(interp_t < t0 || interp_t > t1)
+        throw std::runtime_error("Extrapolation attempted in interpolate");
+    if(fabs(interp_t - t0)< 1e-6)
+        return v0;
+    if(fabs(t1 - interp_t) < 1e-6)
+        return v1;
+
+    T interp_v;
+    double r = (interp_t - t0)/(t1-t0);
+    interp_v = v0 + r*(v1 - v0);
+
+    return interp_v;
+
+}
+
+static Eigen::Matrix3d interpolateSO3 (double t0, double t1, double interp_t, Eigen::Matrix3d& v0, Eigen::Matrix3d& v1){
+
+    if(interp_t < t0 || interp_t > t1)
+        throw std::runtime_error("Extrapolation attempted in interpolateSO3");
+    if(fabs(interp_t - t0)< 1e-6)
+        return v0;
+    if(fabs(t1 - interp_t) < 1e-6)
+        return v1;
+
+    double r = (interp_t - t0)/(t1-t0);
+
+    Eigen::Quaterniond q0(v0);
+    Eigen::Quaterniond q1(v1);
+    Eigen::Quaterniond interp_q = q0.slerp(r,q1);
+    Eigen::Matrix3d interp_R(interp_q);
+
+    return interp_R;
+}
+
+static Eigen::Quaterniond interpolateSO3 (double t0, double t1, double interp_t, Eigen::Quaterniond& q0, Eigen::Quaterniond& q1){
+    if(interp_t < t0 || interp_t > t1)
+        throw std::runtime_error("Extrapolation attempted in interpolateSO3");
+    if(fabs(interp_t - t0)< 1e-6)
+        return q0;
+    if(fabs(t1 - interp_t) < 1e-6)
+        return q1;
+    double r = (interp_t - t0)/(t1-t0);
+    return q0.slerp(r,q1);
+}
+
 } // namespace transform
 
 #endif // TRANSFORM_HPP
