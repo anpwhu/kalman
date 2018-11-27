@@ -58,6 +58,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DEIGEN_NO_DEBUG")
 # Examples
 if(KALMAN_BUILD_EXAMPLES)
   add_executable(example_robot1 "examples/Robot1/main.cpp")
+  add_executable(vio_loc_amcl "examples/vio-loc-amcl/main.cpp")
 endif()
 
 # Unit Tests
@@ -78,10 +79,12 @@ set(TESTS
 
 if(BUILD_TESTING)
   enable_testing()
-  add_subdirectory("external/googletest")
-  include_directories("external/googletest/include")
+  # add_subdirectory("external/googletest")
+  # include_directories("external/googletest/include")
+  find_package(GTest REQUIRED)
+  include_directories(${GTEST_INCLUDE_DIRS})
   add_executable(kalman_test ${TESTS} ${HEADERS})
-  target_link_libraries(kalman_test PRIVATE gtest gtest_main)
+  target_link_libraries(kalman_test PRIVATE gtest gtest_main pthread)
   add_test(Kalman kalman_test)
 endif()
 

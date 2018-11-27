@@ -1,4 +1,4 @@
-data = load('data.csv');
+load('data.csv');
 
 % Plot positions
 figure;

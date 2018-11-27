@@ -93,6 +93,12 @@ namespace Kalman {
             this->Base::operator=(other);
             return *this;
         }
+
+        template<typename OtherDerived>
+        void Oplus (const Eigen::MatrixBase <OtherDerived>& other)
+        {
+            this->Base::operator+=(other);
+        }
     };
     
     /**
